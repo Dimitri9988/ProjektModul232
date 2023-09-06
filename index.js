@@ -48,11 +48,11 @@ function view(dispatch, model) {
   }
 
   return div({ className: "flex flex-col gap-4 " }, [
-    h1({ className: "text-2xl" }, `Weather App`),
+    h1({ className: "text-2xl" }, `Projekt Modul 323`),
     div({className: "flex gap-2"}, [
       div({className: "flex gap-2"}, [
-        input({ className: "shadow border-zinc-800", placeholder: "Enter Location...", oninput: (event) => dispatch(generateMessage(MSGS.INPUT_LOCATION, event.target.value)) }, ),
-        input({ className: "shadow border-zinc-800", placeholder: "Enter Location...", oninput: (event) => dispatch(generateMessage(MSGS.INPUT_AWNSER, event.target.value)) }, ),
+        input({ className: "shadow border-zinc-800", placeholder: "Enter Question...", oninput: (event) => dispatch(generateMessage(MSGS.INPUT_LOCATION, event.target.value)) }, ),
+        input({ className: "shadow border-zinc-800", placeholder: "Enter Anwser...", oninput: (event) => dispatch(generateMessage(MSGS.INPUT_AWNSER, event.target.value)) }, ),
         button({ className: btnStyle, onclick: () => dispatch(generateMessage(MSGS.SAVE_INPUT))}, "Add"),
       ]),
     ]),
@@ -63,23 +63,26 @@ function view(dispatch, model) {
     div({ className: "min-w-full divide-y" }, [
       ...model.entries.map((entry) =>
         div({ className: "bg-amber-500 inline-block w-72 h-72" }, [
-          h2({ className: "text-xl" }, `Card ${entry.id}`),
-          p({ className: "" }, `Question : ${entry.locationName}`),
+          h2({ className: "text-xl" }, `Card`),
+          p({ className: "" }, `Question : ${entry.question}`),
           button(
             { className: "", onclick: () => dispatch(generateMessage(MSGS.INPUT_AWNSER)) },
             "Show Awnser"
           ),
           p({ className: "" }, `Awnser : ${entry.awnser}`),
           // Button zum Löschen eines Eintrags
-          button({ className: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 rounded", onclick: deleteEntry(dispatch, entry.id) }, "Delete Entry"),
-          button(
-            {
-              className: btnStyle,
-              onclick: () => dispatch(updateEntry(dispatch, entry)),
-            },
-            "Edit"
-          )
-        ])
+          button({ className: "bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-1 rounded", onclick: deleteEntry(dispatch, entry.id) }, "Delete Entry"),
+          button({ className: "bg-blue-700 hover:bg-blue-900 text-white font-bold py-1 px-1 rounded", onclick: () => dispatch(updateEntry(dispatch, entry.id)) },"Edit"),
+          div({ className: "gap-2 flex-row "}, [
+            button({ className: "bg-red-500 hover:bg-red-700", onclick: deleteEntry(dispatch, entry.id) }, "Bad"),
+            button({ className: "bg-blue-500 hover:bg-blue-700", onclick: deleteEntry(dispatch, entry.id) }, "Good"),
+            button({ className: "bg-green-500 hover:bg-green-700", onclick: deleteEntry(dispatch, entry.id) }, "Great"),
+          ]),
+        
+        
+        ]),
+        
+
       ),
     ]),
   ]);
@@ -103,16 +106,16 @@ function update(msg, model) {
   console.log(msg);
   switch (msg.type) {
     case MSGS.INPUT_LOCATION:
-      return { ...model, nameLocation: msg.data };
+      return { ...model, nameQuestion: msg.data };
     
     case MSGS.INPUT_AWNSER:
       return { ...model, awnser: msg.data };
 
       case MSGS.SAVE_INPUT:
-        const location = model.nameLocation;
-        const answer = model.answer;
+        const question = model.nameQuestion;
+        const awnser = model.awnser;
         const id = model.id + 1; // Erhöhe die ID für den neuen Eintrag
-        const entry = { id, locationName: location, answer };
+        const entry = { id, question: question, awnser: awnser };
         const entries = [...model.entries, entry];
         model.nameLocation = "";
       return { ...model, id, entries };
@@ -155,7 +158,7 @@ function app(initModel, update, view, node) {
 
 // The initial model when the app starts
 const initModel = {
-  nameLocation: "",
+  nameQuestion: "",
   id : 0,
   awnser: "",
   awnserState: true,
